@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.linked.remoteadb.stun.StunClient
 import com.linked.remoteadb.ui.theme.RemoteADBTheme
 
 class MainActivity : ComponentActivity() {
@@ -122,6 +123,9 @@ class MainActivity : ComponentActivity() {
                             Button(
                                 modifier = Modifier.fillMaxWidth().padding(20.dp, 10.dp),
                                 onClick = {
+                                    StunClient.startRequest {
+                                        println("====${it}")
+                                    }
                                     viewModel.connect(
                                         "192.168.1.16",
                                         12346,
