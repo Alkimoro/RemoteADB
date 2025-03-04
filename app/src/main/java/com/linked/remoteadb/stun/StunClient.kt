@@ -81,8 +81,8 @@ object StunClient {
                                         CandidateType.SERVER_REFLEXIVE_CANDIDATE,
                                 )) {
                                     addIp(
-                                        item.stunServerAddress.hostName ?: "",
-                                        item.reflexiveAddress.hostName ?: ""
+                                        item.stunServerAddress.hostAddress ?: "",
+                                        item.reflexiveAddress.hostAddress ?: ""
                                     )
                                 }
                             }
