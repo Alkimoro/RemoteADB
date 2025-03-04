@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(20.dp)
                             )
 
-                            var ipText by remember { mutableStateOf("") }
+                            var ipText by remember { mutableStateOf("192.168.1.15") }
                             TextField(
                                 modifier = Modifier.padding(20.dp, 0.dp, 20.dp, 10.dp).fillMaxWidth(),
                                 value = ipText,
@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii)
                             )
 
-                            var ipPort by remember { mutableStateOf("") }
+                            var ipPort by remember { mutableStateOf("12346") }
                             TextField(
                                 modifier = Modifier.padding(20.dp, 0.dp).fillMaxWidth(),
                                 value = ipPort,
@@ -100,17 +100,17 @@ class MainActivity : ComponentActivity() {
                                 thickness = .5.dp
                             )
 
-                            var adbIpText by remember { mutableStateOf("") }
-                            TextField(
-                                modifier = Modifier.padding(20.dp, 0.dp, 20.dp, 10.dp).fillMaxWidth(),
-                                value = adbIpText,
-                                onValueChange = { adbIpText = it },
-                                label = { Text("请输入adb无线调试中显示的ip") },
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii)
-                            )
+//                            var adbIpText by remember { mutableStateOf("") }
+//                            TextField(
+//                                modifier = Modifier.padding(20.dp, 0.dp, 20.dp, 10.dp).fillMaxWidth(),
+//                                value = adbIpText,
+//                                onValueChange = { adbIpText = it },
+//                                label = { Text("请输入adb无线调试中显示的ip") },
+//                                singleLine = true,
+//                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii)
+//                            )
 
-                            var adbPort by remember { mutableStateOf("") }
+                            var adbPort by remember { mutableStateOf("5037") }
                             TextField(
                                 modifier = Modifier.padding(20.dp, 0.dp).fillMaxWidth(),
                                 value = adbPort,
@@ -127,10 +127,10 @@ class MainActivity : ComponentActivity() {
                                         println("====${it}")
                                     }
                                     viewModel.connect(
-                                        "192.168.1.16",
-                                        12346,
+                                        ipText,
+                                        ipPort.toIntOrNull() ?: 12346,
                                         "localhost",
-                                        5037
+                                        adbPort.toIntOrNull() ?: 5037
                                     )
                                 }
                             ) {
