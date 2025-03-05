@@ -1,10 +1,9 @@
 package com.linked.remoteadb
 
-import android.util.Log
-import com.linked.remoteadb.model.socket.SocketMsg
-import com.linked.remoteadb.utils.readCountBytes
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.linked.remoteadb.model.socket.SocketMsg
+import com.linked.remoteadb.utils.readCountBytes
 import java.net.Socket
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -17,15 +16,15 @@ class SocketProto(val socket: Socket) {
     }
 
     fun getSocketMsg(): SocketMsg {
-        Log.d(TAG, "getSocketMsg: --${this.socket.getInputStream().available()}")
+        LazyLogger.d(TAG) { "getSocketMsg: --${this.socket.getInputStream().available()}" }
         val bytes = this.socket.getInputStream().readCountBytes(CHUNK_HEAD_SIZE)
         val len = ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getLong().toInt()
-        Log.d(TAG, "getSocketMsg: --len:${len}, bytes:${bytes.size}")
+        LazyLogger.d(TAG) { "getSocketMsg: --len:${len}, bytes:${bytes.size}" }
 
         val msgBytes = this.socket.getInputStream().readCountBytes(len)
 
         val jsonString = String(msgBytes, Charsets.UTF_8)
-        Log.d(TAG, "getSocketMsg:${jsonString}")
+        LazyLogger.d(TAG) { "getSocketMsg:${jsonString}" }
         val element = JsonParser().parse(jsonString)
         val bytesLength = (element as? JsonObject)?.getAsJsonPrimitive("bytes_length")?.asInt ?: 0
         val payload = if (bytesLength > 0) {
@@ -54,7 +53,7 @@ class SocketProto(val socket: Socket) {
             bytes = data
         )
         val msgBytes = socketMsg.decodeToBytes()
-        Log.d(TAG, "sendAdbMsg:${msgBytes.size}, ${socketMsg}")
+        LazyLogger.d(TAG) { "sendAdbMsg:${msgBytes.size}, ${socketMsg}" }
         socket.getOutputStream().write(
             intToBytes(msgBytes.size.toLong()) + msgBytes + socketMsg.bytes
         )
