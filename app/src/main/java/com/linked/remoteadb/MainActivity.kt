@@ -100,15 +100,15 @@ class MainActivity : ComponentActivity() {
                                 thickness = .5.dp
                             )
 
-//                            var adbIpText by remember { mutableStateOf("") }
-//                            TextField(
-//                                modifier = Modifier.padding(20.dp, 0.dp, 20.dp, 10.dp).fillMaxWidth(),
-//                                value = adbIpText,
-//                                onValueChange = { adbIpText = it },
-//                                label = { Text("请输入adb无线调试中显示的ip") },
-//                                singleLine = true,
-//                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii)
-//                            )
+                            var adbIpText by remember { mutableStateOf("localhost") }
+                            TextField(
+                                modifier = Modifier.padding(20.dp, 0.dp, 20.dp, 10.dp).fillMaxWidth(),
+                                value = adbIpText,
+                                onValueChange = { adbIpText = it },
+                                label = { Text("请输入adb无线调试中显示的ip") },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii)
+                            )
 
                             var adbPort by remember { mutableStateOf("5037") }
                             TextField(
@@ -129,7 +129,7 @@ class MainActivity : ComponentActivity() {
                                     viewModel.connect(
                                         ipText,
                                         ipPort.toIntOrNull() ?: 12346,
-                                        "localhost",
+                                        adbIpText,
                                         adbPort.toIntOrNull() ?: 5037
                                     )
                                 }

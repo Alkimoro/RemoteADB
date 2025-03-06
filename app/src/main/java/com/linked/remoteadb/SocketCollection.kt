@@ -6,17 +6,31 @@ import java.util.concurrent.ConcurrentHashMap
 class SocketCollection {
 
     private val socketMap = ConcurrentHashMap<SocketType, Socket>()
+    @Volatile
+    private var host: String? = null
+    @Volatile
+    private var port: Int? = null
 
     @Synchronized
     fun connect(host: String, port: Int): Boolean {
+        this.host = host
+        this.port = port
         if (isConnected()) {
             return true
         }
+        return forceReConnect()
+    }
+
+    @Synchronized
+    private fun forceReConnect(): Boolean {
+        val curHost = this.host ?: return false
+        val curPort = this.port ?: return false
         closeAll()
         SocketType.entries.forEach {
             try {
-                val socket = Socket(host, port)
+                val socket = Socket(curHost, curPort)
                 if (!socket.isConnected) {
+                    socket.release()
                     return false
                 }
                 socketMap.put(it, socket)
@@ -48,13 +62,14 @@ class SocketCollection {
         return result
     }
 
+    //仅供参考，不是很准确
     @Synchronized
     fun isConnected(): Boolean {
         return socketMap.size == SocketType.entries.size && socketMap.all { it.value.isConnected }
     }
 
     @Synchronized
-    fun sendAdbMsg(type: SocketType, data: ByteArray): Boolean {
+    fun sendAdbMsg(type: SocketType, data: ByteArray, retryCount: Int = 1): Boolean {
         if (data.isEmpty()) return true
         return try {
             val stream = socketMap.get(type)?.getOutputStream() ?: return false
@@ -62,7 +77,11 @@ class SocketCollection {
             true
         } catch (e: Exception) {
             e.printStackTrace()
-            false
+            if (retryCount >= 1) {
+                forceReConnect() && sendAdbMsg(type, data, retryCount - 1)
+            } else {
+                false
+            }
         }
     }
 
@@ -75,16 +94,8 @@ class SocketCollection {
 
     @Synchronized
     private fun close(type: SocketType) {
-        try {
-            val socket = socketMap.get(type)
-            socket?.shutdownInput()
-            socket?.shutdownOutput()
-            socket?.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            socketMap.remove(type)
-        }
+        socketMap.get(type).release()
+        socketMap.remove(type)
     }
 
 }
@@ -92,4 +103,11 @@ class SocketCollection {
 enum class SocketType {
     ADB,
     CUSTOM,
+}
+
+fun Socket?.release() {
+    this ?: return
+    runCatching { this.shutdownInput() }
+    runCatching { this.shutdownOutput() }
+    runCatching { this.close() }
 }
