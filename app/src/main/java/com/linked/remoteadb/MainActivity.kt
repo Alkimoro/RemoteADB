@@ -1,5 +1,6 @@
 package com.linked.remoteadb
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.linked.remoteadb.service.ConnectionService
 import com.linked.remoteadb.stun.StunClient
 import com.linked.remoteadb.ui.theme.RemoteADBTheme
 
@@ -126,6 +128,8 @@ class MainActivity : ComponentActivity() {
                                     StunClient.startRequest {
                                         println("====${it}")
                                     }
+                                    val intent = Intent(this@MainActivity, ConnectionService::class.java)
+                                    this@MainActivity.startForegroundService(intent)
                                     viewModel.connect(
                                         ipText,
                                         ipPort.toIntOrNull() ?: 12346,

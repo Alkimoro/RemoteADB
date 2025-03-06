@@ -49,8 +49,6 @@ class ConnectionViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        //AdbManager.close()
-        //ConnectionManager.close()
     }
 
 }
