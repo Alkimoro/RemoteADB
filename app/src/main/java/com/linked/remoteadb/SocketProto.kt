@@ -67,12 +67,6 @@ class SocketProto(val socket: Socket) {
     }
 
     fun close() {
-        try {
-            socket.shutdownInput()
-            socket.shutdownOutput()
-            socket.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        socket.release()
     }
 }
