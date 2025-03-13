@@ -111,6 +111,10 @@ object ConnectionManager {
                     triggerSocketState(ConnectState.ADB_FAIL)
                     continue
                 }
+                if (msg.type == "adb_reconnect_test_task" && !AdbManager.forceReConnect()) {
+                    triggerSocketState(ConnectState.ADB_FAIL)
+                    continue
+                }
             }
         }.start()
 

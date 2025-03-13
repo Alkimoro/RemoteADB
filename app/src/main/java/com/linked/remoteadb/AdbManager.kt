@@ -18,6 +18,10 @@ object AdbManager {
         return socket.connect(host, port)
     }
 
+    fun forceReConnect(): Boolean {
+        return socket.forceReConnect()
+    }
+
     fun isConnected(): Boolean {
         return socket.isConnected()
     }

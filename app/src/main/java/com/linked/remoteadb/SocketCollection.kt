@@ -22,24 +22,31 @@ class SocketCollection {
     }
 
     @Synchronized
-    private fun forceReConnect(): Boolean {
+    fun forceReConnect(): Boolean {
         val curHost = this.host ?: return false
         val curPort = this.port ?: return false
         closeAll()
         SocketType.entries.forEach {
-            try {
-                val socket = Socket(curHost, curPort)
-                if (!socket.isConnected) {
-                    socket.release()
-                    return false
-                }
-                socketMap.put(it, socket)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            if (!connectByType(it, curHost, curPort)) {
                 return false
             }
         }
         return true
+    }
+
+    private fun connectByType(type: SocketType, curHost: String, curPort: Int): Boolean {
+        return try {
+            val socket = Socket(curHost, curPort)
+            if (!socket.isConnected) {
+                socket.release()
+                return false
+            }
+            socketMap.put(type, socket)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
     }
 
     @Synchronized
