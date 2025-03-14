@@ -25,7 +25,6 @@ import kotlin.time.Duration.Companion.seconds
  *
  * ["stun:stun.miwifi.com","stun:stun.qq.com:3478","stun:stun.qq.com","stun:hw-v2-web-player-tracker.biliapi.net","stun:stun.smartgslb.com:19302","stun:stun.l.google.com:19302","stun:stun2.l.google.com:19302","stun:stun3.l.google.com:19302","stun:stun4.l.google.com:19302","stun:stun.nextcloud.com:443","stun:stun.cloudflare.com","stun:stunserver.stunprotocol.org:3478","stun:freestun.net:5350","stun:global.stun.twilio.com","stun:jp1.stun.twilio.com","stun:sg1.stun.twilio.com","stun:us1.stun.twilio.com","stun:stun.syncthing.net"]
  * */
-
 object StunClient {
 
     init {
@@ -43,13 +42,13 @@ object StunClient {
 
     private val stunServerList = listOf(
         "stun.cloudflare.com" to STUN_DEFAULT_PORT,
-//        "stun:stun.cloudflare.com" to STUN_DEFAULT_PORT,
-//        "stunserver.stunprotocol.org" to STUN_DEFAULT_PORT,
-//        "stun.l.google.com" to 19302,
-//        "stun.miwifi.com" to STUN_DEFAULT_PORT,
-//        "stun.qq.com" to STUN_DEFAULT_PORT,
-//        "hw-v2-web-player-tracker.biliapi.net" to STUN_DEFAULT_PORT,
-//        "stun.smartgslb.com" to 19302,
+        "stun.l.google.com" to 19302,
+        "stunserver.stunprotocol.org" to STUN_DEFAULT_PORT,
+        "stun.l.google.com" to 19302,
+        "stun.miwifi.com" to STUN_DEFAULT_PORT,
+        "stun.qq.com" to STUN_DEFAULT_PORT,
+        "hw-v2-web-player-tracker.biliapi.net" to STUN_DEFAULT_PORT,
+        "stun.smartgslb.com" to 19302,
     )
 
     private val executor by lazy {
@@ -113,7 +112,9 @@ object StunClient {
                 return
             }
             if (key.isNotEmpty()) {
-                waitList.removeIf { it.key == key }
+                waitList.find { it.key == key }?.let {
+                    waitList.remove(it)
+                }
             }
             waitList.add(WaitTask(key, callback))
         }
