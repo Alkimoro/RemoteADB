@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(20.dp)
                             )
 
-                            var ipText by remember { mutableStateOf("192.168.1.15") }
+                            var ipText by remember { mutableStateOf("18.166.201.88") }
                             TextField(
                                 modifier = Modifier.padding(20.dp, 0.dp, 20.dp, 10.dp).fillMaxWidth(),
                                 value = ipText,
