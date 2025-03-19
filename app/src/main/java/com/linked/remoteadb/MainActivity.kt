@@ -1,6 +1,7 @@
 package com.linked.remoteadb
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -165,6 +166,12 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.size(FilterChipDefaults.IconSize)
                                     )
                                 }
+                            )
+
+                            Text(
+                                "设备信息:\nModel: ${Build.MODEL}\nVersion: ${Build.VERSION.SDK_INT}\n品牌: ${Build.BRAND}\n硬件名: ${Build.HARDWARE}",
+                                style = TextStyle(fontSize = 18.sp),
+                                modifier = Modifier.padding(20.dp, 20.dp, 20.dp, 10.dp)
                             )
                         }
                     }
