@@ -44,10 +44,10 @@ class SocketProto(val socket: Socket) {
         }
     }
 
-    fun sendMsg(data: ByteArray, type: String, deviceId: String = "") {
+    fun sendMsg(data: ByteArray, type: String, deviceId: String = "", msg: String = "") {
         val socketMsg = SocketMsg(
             type = type,
-            msg = "",
+            msg = msg,
             device_id = deviceId,
             bytes_length = data.size,
             bytes = data

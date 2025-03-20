@@ -1,5 +1,8 @@
 package com.linked.remoteadb
 
+import android.os.Build
+import com.linked.remoteadb.model.socket.FirstMsgData
+import com.linked.remoteadb.model.socket.gson
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +60,7 @@ object ConnectionManager {
                             close()
                             socket = SocketProto(Socket(ip, port))
                         }
-                        socket?.sendMsg(data = ByteArray(0), type = "init", deviceId = UUID.randomUUID().toString())
+                        socket?.sendMsg(data = ByteArray(0), type = "init", deviceId = UUID.randomUUID().toString(), msg = createFirstMsg())
                         if (socket?.socket?.isConnected == true) ConnectState.CONNECTED else ConnectState.CONNECT_FAIL
                     }
                 } else ConnectState.ADB_FAIL
@@ -77,6 +80,15 @@ object ConnectionManager {
 
             triggerSocketState(it)
         }
+    }
+
+    private fun createFirstMsg(): String {
+        val msg = FirstMsgData(
+            deviceName = "${Build.BRAND} ${Build.MODEL}",
+            deviceModel = "${Build.MODEL} ${Build.HARDWARE}",
+            osVersion = "${Build.VERSION.SDK_INT}"
+        )
+        return gson.toJson(msg)
     }
 
     private fun startSocketListening() {
