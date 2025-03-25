@@ -60,8 +60,10 @@ object ConnectionManager {
                             close()
                             socket = SocketProto(Socket(ip, port))
                         }
-                        socket?.sendMsg(data = ByteArray(0), type = "init", deviceId = UUID.randomUUID().toString(), msg = createFirstMsg())
-                        if (socket?.socket?.isConnected == true) ConnectState.CONNECTED else ConnectState.CONNECT_FAIL
+                        if (socket?.socket?.isConnected == true) {
+                            socket?.sendMsg(data = ByteArray(0), type = "init", deviceId = UUID.randomUUID().toString(), msg = createFirstMsg())
+                            ConnectState.CONNECTED
+                        } else ConnectState.CONNECT_FAIL
                     }
                 } else ConnectState.ADB_FAIL
             } catch (e: Exception) {
