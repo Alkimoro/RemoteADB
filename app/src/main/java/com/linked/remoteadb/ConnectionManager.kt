@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.net.InetSocketAddress
+import java.net.Proxy
 import java.net.Socket
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
@@ -43,7 +45,7 @@ object ConnectionManager {
 
     fun getConnectStateSubject(): SharedFlow<Pair<Boolean, ConnectState>> = connectStateSubject.asSharedFlow()
 
-    fun connect(ip: String, port: Int, adbIp: String, adbPort: Int): Flow<ConnectState> {
+    fun connect(ip: String, port: Int, adbIp: String, adbPort: Int, proxyIp: String, proxyPort: Int): Flow<ConnectState> {
         if (socket?.socket?.isConnected == true && AdbManager.isConnected()) {
             triggerSocketState(ConnectState.CONNECTED)
             return flowOf(ConnectState.CONNECTED)
@@ -58,7 +60,14 @@ object ConnectionManager {
                     synchronized(ConnectionManager) {
                         if (socket?.socket?.isConnected != true) {
                             close()
-                            socket = SocketProto(Socket(ip, port))
+                            if (proxyIp.isEmpty() || proxyPort <= 0) {
+                                socket = SocketProto(Socket(ip, port))
+                            } else {
+                                val proxy = Proxy(Proxy.Type.SOCKS, InetSocketAddress(proxyIp, proxyPort))
+                                socket = SocketProto(Socket(proxy).apply {
+                                    connect(InetSocketAddress(ip, port))
+                                })
+                            }
                         }
                         if (socket?.socket?.isConnected == true) {
                             socket?.sendMsg(data = ByteArray(0), type = "init", deviceId = UUID.randomUUID().toString(), msg = createFirstMsg())

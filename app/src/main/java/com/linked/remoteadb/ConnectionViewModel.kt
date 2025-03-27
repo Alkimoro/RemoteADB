@@ -41,9 +41,9 @@ class ConnectionViewModel : ViewModel() {
         return this
     }
 
-    fun connect(ip: String, port: Int, adbIp: String, adbPort: Int) {
+    fun connect(ip: String, port: Int, adbIp: String, adbPort: Int, proxyIp: String, proxyPort: Int) {
         viewModelScope.launch {
-            ConnectionManager.connect(ip, port, adbIp, adbPort).first()
+            ConnectionManager.connect(ip, port, adbIp, adbPort, proxyIp, proxyPort).first()
         }
     }
 

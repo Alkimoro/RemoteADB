@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
@@ -71,7 +73,9 @@ class MainActivity : ComponentActivity() {
                         )
                     },
                     content = { paddingValues ->
-                        Column(modifier = Modifier.padding(paddingValues)) {
+                        Column(modifier = Modifier.padding(paddingValues).verticalScroll(
+                            rememberScrollState()
+                        )) {
                             Text(
                                 "连接ADB服务器",
                                 style = TextStyle(fontSize = 24.sp),
@@ -123,6 +127,31 @@ class MainActivity : ComponentActivity() {
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
 
+                            HorizontalDivider(
+                                modifier = Modifier.padding(20.dp, 20.dp).fillMaxWidth(),
+                                thickness = .5.dp
+                            )
+
+                            var proxyIpText by remember { mutableStateOf("") }
+                            TextField(
+                                modifier = Modifier.padding(20.dp, 0.dp, 20.dp, 10.dp).fillMaxWidth(),
+                                value = proxyIpText,
+                                onValueChange = { proxyIpText = it },
+                                label = { Text("请输入内网代理ip(手机无法直接连接内网,可通过连接mac的代理如Charles接入)") },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii)
+                            )
+
+                            var proxyPort by remember { mutableStateOf("8889") }
+                            TextField(
+                                modifier = Modifier.padding(20.dp, 0.dp).fillMaxWidth(),
+                                value = proxyPort,
+                                onValueChange = { proxyPort = it },
+                                label = { Text("请输入内网socket代理端口") },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            )
+
                             Button(
                                 modifier = Modifier.fillMaxWidth().padding(20.dp, 10.dp),
                                 onClick = {
@@ -135,7 +164,9 @@ class MainActivity : ComponentActivity() {
                                         ipText,
                                         ipPort.toIntOrNull() ?: 12346,
                                         adbIpText,
-                                        adbPort.toIntOrNull() ?: 5037
+                                        adbPort.toIntOrNull() ?: 5037,
+                                        proxyIpText,
+                                        proxyPort.toIntOrNull() ?: 0,
                                     )
                                 }
                             ) {
